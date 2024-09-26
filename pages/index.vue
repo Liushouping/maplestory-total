@@ -14,7 +14,7 @@
             <th>分數</th>
             <th>數量</th>
             <th>計分</th>
-            <th>總共</th>
+            <th class="total-header">總共</th>
           </tr>
         </thead>
         <tbody>
@@ -32,7 +32,9 @@
               >
             </td>
             <td>{{ formatNumber(item.score * (item.quantity || 0)) }}</td>
-            <td v-if="index === items.length - 1" :rowspan="items.length + 1" class="total-cell text-[24px]">{{ formatNumber(total) }}</td>
+            <td v-if="index === items.length - 1" :rowspan="items.length + 1" class="total-cell text-[24px]">
+              <div class="total-wrapper">{{ formatNumber(total) }}</div>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -185,7 +187,8 @@ body {
 }
 
 table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   width: 100%;
   margin: 0 auto;
   background-color: #fffacd;
@@ -200,7 +203,36 @@ th, td {
 
 th {
   background-color: #fffacd;
+  border-bottom: 1px solid #333;
 }
+
+.total-header {
+  border-right: 1px solid #333;
+}
+
+.total-cell {
+  border-right: 1px solid #333;
+  position: relative;
+}
+
+.total-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #333;
+}
+
+/* 确保最后一行的右边框显示 */
+tr:last-child td {
+  border-bottom: 1px solid #333;
+}
+
+/* ... 其他樣式保持不變 ... */
 
 img {
   width: 30px; 
