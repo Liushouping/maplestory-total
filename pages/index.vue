@@ -39,7 +39,7 @@
             </td>
             <td>{{ formatNumber(item.score * (item.quantity || 0)) }}</td>
             <!-- 總分單元格 -->
-            <td v-if="index === items.length - 1" :rowspan="items.length + 1" class="total-cell text-[24px]">{{ formatNumber(total) }}</td>
+            <td v-if="index === items.length - 1"  class="total-cell text-[24px]">{{ formatNumber(total) }}</td>
           </tr>
         </tbody>
       </table>
