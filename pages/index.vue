@@ -20,7 +20,7 @@
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
             <td>
-              <img :src="`/a-${index + 1}.png`" alt="Image" />
+              <img :src="`/a-${index + 1}.webp`" alt="Image" />
             </td>
             <td>{{ formatNumber(item.score) }}</td>
             <td>
