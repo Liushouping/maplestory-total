@@ -14,7 +14,7 @@
             <th>分數</th>
             <th>數量</th>
             <th>計分</th>
-            <th class="total-header">總共</th>
+            <th>總共</th>
           </tr>
         </thead>
         <tbody>
@@ -32,21 +32,16 @@
               >
             </td>
             <td>{{ formatNumber(item.score * (item.quantity || 0)) }}</td>
-            <td v-if="index === items.length - 1" :rowspan="items.length + 1" class="total-cell text-[24px]">
-              <div class="total-wrapper">{{ formatNumber(total) }}</div>
-            </td>
+            <td v-if="index === items.length - 1" :rowspan="items.length + 1" class="total-cell text-[24px]">{{ formatNumber(total) }}</td>
           </tr>
         </tbody>
       </table>
       <img v-if="showStamp" src="/pass.png" alt="通過" class="watermark" :class="{ 'stamp-animation': isAnimating }">
-      <audio ref="passAudio" src="/pass.wav" preload="auto"></audio>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-
 const items = ref([
   { score: 2, quantity: '' },
   { score: 3, quantity: '' },
@@ -79,15 +74,11 @@ const handleBlur = (item) => {
 
 const showStamp = ref(false)
 const isAnimating = ref(false)
-const passAudio = ref(null)
 
 watch(total, (newTotal, oldTotal) => {
   if (newTotal >= 1000 && !showStamp.value) {
     showStamp.value = true
     isAnimating.value = true
-    if (passAudio.value) {
-      passAudio.value.play()
-    }
     setTimeout(() => {
       isAnimating.value = false
     }, 500) // 動畫持續時間
@@ -187,8 +178,7 @@ body {
 }
 
 table {
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
   width: 100%;
   margin: 0 auto;
   background-color: #fffacd;
@@ -203,36 +193,7 @@ th, td {
 
 th {
   background-color: #fffacd;
-  border-bottom: 1px solid #333;
 }
-
-.total-header {
-  border-right: 1px solid #333;
-}
-
-.total-cell {
-  border-right: 1px solid #333;
-  position: relative;
-}
-
-.total-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid #333;
-}
-
-/* 确保最后一行的右边框显示 */
-tr:last-child td {
-  border-bottom: 1px solid #333;
-}
-
-/* ... 其他樣式保持不變 ... */
 
 img {
   width: 30px; 
