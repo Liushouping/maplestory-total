@@ -1,5 +1,5 @@
 <template>
-  <div class="page-container px-4 lg:px-0">
+  <div class="page-container px-4 xl:px-0">
     <div class="table-container relative">
       <!-- 頁面標題 -->
       <div class="absolute -top-9 left-9 w-[160px] h-[45px] flex items-center justify-center bg-white border-[1.5px] border-black rounded-[15px] tracking-[2px] text-[18px]">
