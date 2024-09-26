@@ -37,6 +37,7 @@
         </tbody>
       </table>
       <img v-if="showStamp" src="/pass.png" alt="通過" class="watermark" :class="{ 'stamp-animation': isAnimating }">
+      <audio ref="passAudio" src="/pass.wav"></audio>
     </div>
   </div>
 </template>
@@ -74,11 +75,13 @@ const handleBlur = (item) => {
 
 const showStamp = ref(false)
 const isAnimating = ref(false)
+const passAudio = ref(null)
 
 watch(total, (newTotal, oldTotal) => {
   if (newTotal >= 1000 && !showStamp.value) {
     showStamp.value = true
     isAnimating.value = true
+    passAudio.value.play()
     setTimeout(() => {
       isAnimating.value = false
     }, 500) // 動畫持續時間
