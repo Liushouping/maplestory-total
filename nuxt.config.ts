@@ -3,8 +3,10 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   modules: [
     '@nuxt/image',
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    // 移除 '@nuxtjs/i18n',
   ],
+  // 移除整个 i18n 配置块
   devtools: { enabled: false },
   css: ['~/assets/css/main.css'],
   build: {
@@ -14,7 +16,7 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: ['gsap']
     },
-    assetsInclude: ['**/*.png'] // 确保 PNG 文件被正确处理
+    assetsInclude: ['**/*.png']
   },
   image: {
     // 可选: 配置图片处理选项
@@ -25,12 +27,12 @@ export default defineNuxtConfig({
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@900&family=Anton&display=swap' }
       ]
     },
-    baseURL: '/' // 确保基础URL正确
+    baseURL: '/'
   },
   nitro: {
     prerender: {
       crawlLinks: true,
       routes: ['/'],
     },
-  }
+  },
 })

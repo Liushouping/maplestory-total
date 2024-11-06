@@ -1,57 +1,62 @@
 <template>
-  <div class="page-container px-4 xl:px-0">
-    <div class="table-container relative">
-      <!-- 頁面標題 -->
-      <div class="absolute -top-9 left-9 w-[160px] h-[45px] flex items-center justify-center bg-white border-[1.5px] border-black rounded-[15px] tracking-[2px] text-[18px]">
-        每週新世界
+  <div>
+    <!-- 現有的頁面內容 -->
+    <div class="page-container px-4 xl:px-0">
+      <div class="table-container relative">
+        <!-- 頁面標題 -->
+        <div class="absolute -top-9 left-9 w-[160px] h-[45px] flex items-center justify-center bg-white border-[1.5px] border-black rounded-[15px] tracking-[2px] text-[18px]">
+          每週新世界
+        </div>
+        <!-- 清除按鈕 -->
+        <div @click="clearScores" class="absolute -top-9 right-4 w-[70px] h-[45px] flex items-center justify-center bg-white border-[1.5px] border-black rounded-[15px] tracking-[2px] text-[18px] cursor-pointer hover:bg-gray-100">
+          清除
+        </div>
+        <!-- 主表格 -->
+        <table>
+          <thead>
+            <tr class="tracking-[12px]">
+              <th>名稱</th>
+              <th>分數</th>
+              <th>數量</th>
+              <th>計分</th>
+              <th>總共</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 遍歷項目列表 -->
+            <tr v-for="(item, index) in items" :key="index">
+              <td>
+                <!-- 顯示項目圖片 -->
+                <img :src="`/a-${index + 1}.webp`" alt="Image" />
+              </td>
+              <td>{{ formatNumber(item.score) }}</td>
+              <td>
+                <!-- 數量輸入框 -->
+                <input
+                  v-model="item.quantity"
+                  type="text"
+                  @input="handleInput(item)"
+                  @blur="handleBlur(item)"
+                >
+              </td>
+              <td>{{ formatNumber(item.score * (item.quantity || 0)) }}</td>
+              <!-- 總分單元格 -->
+              <td v-if="index === items.length - 1"  class="total-cell text-[24px]">{{ formatNumber(total) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- 通過印章 -->
+        <img v-if="showStamp" src="/pass.png" alt="通過" class="watermark" :class="{ 'stamp-animation': isAnimating }">
+        <!-- 通過音效 -->
+        <audio ref="passAudio" src="/pass.wav"></audio>
       </div>
-      <!-- 清除按鈕 -->
-      <div @click="clearScores" class="absolute -top-9 right-4 w-[70px] h-[45px] flex items-center justify-center bg-white border-[1.5px] border-black rounded-[15px] tracking-[2px] text-[18px] cursor-pointer hover:bg-gray-100">
-        清除
-      </div>
-      <!-- 主表格 -->
-      <table>
-        <thead>
-          <tr class="tracking-[12px]">
-            <th>名稱</th>
-            <th>分數</th>
-            <th>數量</th>
-            <th>計分</th>
-            <th>總共</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- 遍歷項目列表 -->
-          <tr v-for="(item, index) in items" :key="index">
-            <td>
-              <!-- 顯示項目圖片 -->
-              <img :src="`/a-${index + 1}.webp`" alt="Image" />
-            </td>
-            <td>{{ formatNumber(item.score) }}</td>
-            <td>
-              <!-- 數量輸入框 -->
-              <input
-                v-model="item.quantity"
-                type="text"
-                @input="handleInput(item)"
-                @blur="handleBlur(item)"
-              >
-            </td>
-            <td>{{ formatNumber(item.score * (item.quantity || 0)) }}</td>
-            <!-- 總分單元格 -->
-            <td v-if="index === items.length - 1"  class="total-cell text-[24px]">{{ formatNumber(total) }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <!-- 通過印章 -->
-      <img v-if="showStamp" src="/pass.png" alt="通過" class="watermark" :class="{ 'stamp-animation': isAnimating }">
-      <!-- 通過音效 -->
-      <audio ref="passAudio" src="/pass.wav"></audio>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted, computed, watch } from 'vue'
+
 // 定義項目列表
 const items = ref([
   { score: 2, quantity: '' },
@@ -144,6 +149,15 @@ const clearScores = () => {
   })
   saveData()
 }
+
+const isLoading = ref(true)
+
+onMounted(() => {
+  // 模擬加載過程
+  setTimeout(() => {
+    isLoading.value = false
+  }, 2000) // 2秒後隱藏加載動畫
+})
 </script>
 
 <style scoped>
@@ -163,7 +177,7 @@ input, td:nth-child(2), td:nth-child(4), .total-cell {
 input {
   width: 50px;
   text-align: center;
-  background-color: #fffacd;
+  background-color: #fff;
   border: none;
   border-bottom: 1px solid #333;
   outline: none;
@@ -174,9 +188,12 @@ input {
 
 /* 頁面背景設置 */
 .page-container {
+  /*
   background-image: url('https://static.ghost.org/v5.0.0/images/publication-cover.jpg');
   background-size: cover;
   background-position: center;
+  */
+  background: #333;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -185,10 +202,10 @@ input {
 
 /* 表格容器樣式 */
 .table-container {
-  width: 1200px;
+  width: 850px;
   margin: 0 auto;
   position: relative;
-  background-color: #fffacd;
+  background-color: #fff;
   padding: 20px;
   border-radius: 15px;
 }
@@ -198,7 +215,7 @@ table {
   border-collapse: collapse;
   width: 100%;
   margin: 0 auto;
-  background-color: #fffacd;
+  background-color: #fff;
   border: 1px solid #333;
 }
 
@@ -209,7 +226,7 @@ th, td {
 }
 
 th {
-  background-color: #fffacd;
+  background-color: #fff;
 }
 
 /* 圖片樣式 */
@@ -259,5 +276,33 @@ img {
 /* 按鈕過渡效果 */
 .absolute {
   transition: background-color 0.3s ease;
+}
+
+/* 加載動畫 */
+.loading-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
