@@ -49,11 +49,7 @@
               <td 
               v-if="index === items.length - 1" 
               class="total-cell text-[24px]">
-                <count-up
-                :end-val="total"
-                :options="{ duration: 0.75, enableScrollSpy: true, useGrouping: false }">
                 {{ formatNumber(total) }}
-                </count-up>
               </td>
             </tr>
           </tbody>
@@ -70,7 +66,6 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import CountUp from 'vue-countup-v3'
 
 // 定義項目列表
 const items = ref([
