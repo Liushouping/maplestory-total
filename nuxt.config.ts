@@ -10,7 +10,10 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   css: ['~/assets/css/main.css'],
   build: {
-    transpile: ['gsap'],
+    transpile: [
+      'gsap',
+      'vue-countup-v3'
+    ],
   },
   vite: {
     optimizeDeps: {

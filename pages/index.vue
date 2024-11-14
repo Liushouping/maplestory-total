@@ -27,7 +27,12 @@
             <tr v-for="(item, index) in items" :key="index">
               <td>
                 <!-- 顯示項目圖片 -->
-                <img :src="`/a-${index + 1}.webp`" alt="Image" />
+                <img 
+                  :src="`/a-${index + 1}.webp`" 
+                  alt="Image" 
+                  @click="handleImageClick(index + 1)"
+                  class="cursor-pointer hover:opacity-80"
+                />
               </td>
               <td>{{ formatNumber(item.score) }}</td>
               <td>
@@ -41,7 +46,15 @@
               </td>
               <td>{{ formatNumber(item.score * (item.quantity || 0)) }}</td>
               <!-- 總分單元格 -->
-              <td v-if="index === items.length - 1"  class="total-cell text-[24px]">{{ formatNumber(total) }}</td>
+              <td 
+              v-if="index === items.length - 1" 
+              class="total-cell text-[24px]">
+                <count-up
+                :end-val="total"
+                :options="{ duration: 0.75, enableScrollSpy: true, useGrouping: false }">
+                {{ formatNumber(total) }}
+                </count-up>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -51,11 +64,13 @@
         <audio ref="passAudio" src="/pass.wav"></audio>
       </div>
     </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
+import CountUp from 'vue-countup-v3'
 
 // 定義項目列表
 const items = ref([
@@ -96,6 +111,9 @@ const showStamp = ref(false)
 const isAnimating = ref(false)
 const passAudio = ref(null)
 
+// 控制翻牌動畫
+const isFlipping = ref(false)
+
 // 監聽總分變化
 watch(total, (newTotal, oldTotal) => {
   if (newTotal >= 1000 && !showStamp.value) {
@@ -107,6 +125,12 @@ watch(total, (newTotal, oldTotal) => {
     }, 500) // 動畫持續時間
   } else if (newTotal < 1000 && showStamp.value) {
     showStamp.value = false
+  }
+  if (newTotal !== oldTotal) {
+    isFlipping.value = true
+    setTimeout(() => {
+      isFlipping.value = false
+    }, 500) // 動畫持續時間
   }
 })
 
@@ -158,6 +182,7 @@ onMounted(() => {
     isLoading.value = false
   }, 2000) // 2秒後隱藏加載動畫
 })
+
 </script>
 
 <style scoped>
@@ -188,12 +213,12 @@ input {
 
 /* 頁面背景設置 */
 .page-container {
-  /*
-  background-image: url('https://static.ghost.org/v5.0.0/images/publication-cover.jpg');
+  
+  background-image: url('/bg.jpg');
   background-size: cover;
   background-position: center;
-  */
-  background: #333;
+  
+  /* background: #333; */
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -202,6 +227,7 @@ input {
 
 /* 表格容器樣式 */
 .table-container {
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   width: 850px;
   margin: 0 auto;
   position: relative;
