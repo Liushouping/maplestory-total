@@ -34,7 +34,11 @@
                   class="cursor-pointer hover:opacity-80"
                 />
               </td>
-              <td>{{ formatNumber(item.score) }}</td>
+              <td>
+                <div class="number-flip">
+                  {{ formatNumber(item.score) }}
+                </div>
+              </td>
               <td>
                 <!-- 數量輸入框 -->
                 <input
@@ -44,12 +48,18 @@
                   @blur="handleBlur(item)"
                 >
               </td>
-              <td>{{ formatNumber(item.score * (item.quantity || 0)) }}</td>
+              <td>
+                <div class="number-flip" :class="{ 'flip': isFlipping }">
+                  {{ formatNumber(item.score * (item.quantity || 0)) }}
+                </div>
+              </td>
               <!-- 總分單元格 -->
               <td 
               v-if="index === items.length - 1" 
               class="total-cell text-[24px]">
-                {{ formatNumber(total) }}
+                <div class="number-flip" :class="{ 'flip': isFlipping }">
+                  {{ formatNumber(total) }}
+                </div>
               </td>
             </tr>
           </tbody>
@@ -89,8 +99,12 @@ const total = computed(() => {
 
 // 處理輸入事件
 const handleInput = (item) => {
-  item.quantity = item.quantity.replace(/^0+/, '') // 移除前導零
-  saveData() // 保存數據
+  item.quantity = item.quantity.replace(/^0+/, '')
+  isFlipping.value = true
+  setTimeout(() => {
+    isFlipping.value = false
+  }, 500)
+  saveData()
 }
 
 // 處理失焦事件
@@ -325,5 +339,40 @@ img {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* 添加數字翻轉動畫相關樣式 */
+.number-flip {
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.number-flip.flip {
+  animation: flipAnimation 0.5s ease-out;
+}
+
+@keyframes flipAnimation {
+  0% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+/* 確保數字容器有足夠的空間進行動畫 */
+td {
+  min-height: 40px;
+  position: relative;
+}
+
+/* 優化數字顯示 */
+.number-flip {
+  display: inline-block;
+  min-width: 20px;
 }
 </style>
