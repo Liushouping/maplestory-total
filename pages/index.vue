@@ -92,13 +92,41 @@ const items = ref([
 
 // 計算總分
 const total = computed(() => {
-  return items.value.reduce((sum, item) => sum + item.score * (Number(item.quantity) || 0), 0)
+  const sum = items.value.reduce((sum, item) => 
+    sum + item.score * (Number(item.quantity) || 0), 0
+  )
+  return Math.min(sum, 10000) // 確保總分不超過10000
 })
 
 // 處理輸入事件
 const handleInput = (item) => {
+  // 移除開頭的0
   item.quantity = item.quantity.replace(/^0+/, '')
+  
+  // 限制輸入值不超過10000
+  const num = parseInt(item.quantity)
+  if (num > 10000) {
+    item.quantity = '10000'
+  }
+  
+  // 如果總分超過10000，將當前輸入值調整至不超過限制
+  const potentialTotal = calculatePotentialTotal(item)
+  if (potentialTotal > 10000) {
+    const maxAllowed = Math.floor((10000 - (total.value - item.score * (Number(item.quantity) || 0))) / item.score)
+    item.quantity = String(Math.max(0, maxAllowed))
+  }
+  
   saveData()
+}
+
+// 新增函數：計算潛在總分
+const calculatePotentialTotal = (currentItem) => {
+  return items.value.reduce((sum, item) => {
+    if (item === currentItem) {
+      return sum + item.score * (Number(currentItem.quantity) || 0)
+    }
+    return sum + item.score * (Number(item.quantity) || 0)
+  }, 0)
 }
 
 // 處理失焦事件
@@ -155,7 +183,7 @@ onMounted(() => {
   loadData()
 })
 
-// 格式化數字（添加千位分隔符）
+// 格��化數字（添加千位分隔符）
 const formatNumber = (num) => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
