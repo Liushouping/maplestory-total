@@ -35,9 +35,7 @@
                 />
               </td>
               <td>
-                <div class="number-flip">
-                  {{ formatNumber(item.score) }}
-                </div>
+                <NumberFlow :value="item.score" />
               </td>
               <td>
                 <!-- 數量輸入框 -->
@@ -49,17 +47,16 @@
                 >
               </td>
               <td>
-                <div class="number-flip" :class="{ 'flip': isFlipping }">
-                  {{ formatNumber(item.score * (item.quantity || 0)) }}
-                </div>
+                <NumberFlow :value="item.score * (item.quantity || 0)" />
               </td>
               <!-- 總分單元格 -->
               <td 
               v-if="index === items.length - 1" 
               class="total-cell text-[24px]">
-                <div class="number-flip" :class="{ 'flip': isFlipping }">
+                <!-- <div class="number-flip" :class="{ 'flip': isFlipping }">
                   {{ formatNumber(total) }}
-                </div>
+                </div> -->
+                <NumberFlow :value="total" />
               </td>
             </tr>
           </tbody>
@@ -76,6 +73,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
+import NumberFlow from '@number-flow/vue'
 
 // 定義項目列表
 const items = ref([
@@ -100,10 +98,6 @@ const total = computed(() => {
 // 處理輸入事件
 const handleInput = (item) => {
   item.quantity = item.quantity.replace(/^0+/, '')
-  isFlipping.value = true
-  setTimeout(() => {
-    isFlipping.value = false
-  }, 500)
   saveData()
 }
 
@@ -120,26 +114,17 @@ const showStamp = ref(false)
 const isAnimating = ref(false)
 const passAudio = ref(null)
 
-// 控制翻牌動畫
-const isFlipping = ref(false)
-
 // 監聽總分變化
-watch(total, (newTotal, oldTotal) => {
+watch(total, (newTotal) => {
   if (newTotal >= 1000 && !showStamp.value) {
     showStamp.value = true
     isAnimating.value = true
-    passAudio.value.play() // 播放音效
+    passAudio.value.play()
     setTimeout(() => {
       isAnimating.value = false
-    }, 500) // 動畫持續時間
+    }, 500)
   } else if (newTotal < 1000 && showStamp.value) {
     showStamp.value = false
-  }
-  if (newTotal !== oldTotal) {
-    isFlipping.value = true
-    setTimeout(() => {
-      isFlipping.value = false
-    }, 500) // 動畫持續時間
   }
 })
 
@@ -339,29 +324,6 @@ img {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-/* 添加數字翻轉動畫相關樣式 */
-.number-flip {
-  transition: transform 0.5s;
-  transform-style: preserve-3d;
-  perspective: 1000px;
-}
-
-.number-flip.flip {
-  animation: flipAnimation 0.5s ease-out;
-}
-
-@keyframes flipAnimation {
-  0% {
-    transform: rotateX(0deg);
-  }
-  50% {
-    transform: rotateX(90deg);
-  }
-  100% {
-    transform: rotateX(0deg);
-  }
 }
 
 /* 確保數字容器有足夠的空間進行動畫 */
