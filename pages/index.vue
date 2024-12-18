@@ -95,7 +95,7 @@ const total = computed(() => {
   const sum = items.value.reduce((sum, item) => 
     sum + item.score * (Number(item.quantity) || 0), 0
   )
-  return Math.min(sum, 10000) // 確保總分不超過10000
+  return Math.min(sum, 100000) // 確保總分不超過10000
 })
 
 // 處理輸入事件
@@ -103,16 +103,16 @@ const handleInput = (item) => {
   // 移除開頭的0
   item.quantity = item.quantity.replace(/^0+/, '')
   
-  // 限制輸入值不超過10000
+  // 限制輸入值不超過100000
   const num = parseInt(item.quantity)
-  if (num > 10000) {
-    item.quantity = '10000'
+  if (num > 100000) {
+    item.quantity = '100000'
   }
   
   // 如果總分超過10000，將當前輸入值調整至不超過限制
   const potentialTotal = calculatePotentialTotal(item)
-  if (potentialTotal > 10000) {
-    const maxAllowed = Math.floor((10000 - (total.value - item.score * (Number(item.quantity) || 0))) / item.score)
+  if (potentialTotal > 100000) {
+    const maxAllowed = Math.floor((100000 - (total.value - item.score * (Number(item.quantity) || 0))) / item.score)
     item.quantity = String(Math.max(0, maxAllowed))
   }
   
